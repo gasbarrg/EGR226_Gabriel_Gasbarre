@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1611713885 source:w:\egr-226\statslibrary\main.c
+	<stdio.h>
+	<stdlib.h>
+	"stats_lib.h"
+
+1611714033 source:w:\egr-226\statslibrary\stats_lib.c
+	"stats_lib.h"
+	<math.h>
+
+1611545214 w:\egr-226\statslibrary\stats_lib.h
+
+1611619680 w:\egr-226\statslibrary\stats_lib.c
+	"stats_lib.h"
+
