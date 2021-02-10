@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1612377479 source:w:\egr-226\egr-226-gabrielgasbarrelab2_part2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

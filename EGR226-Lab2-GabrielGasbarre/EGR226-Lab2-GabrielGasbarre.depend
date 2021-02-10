@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1612140430 source:w:\egr-226\egr226-lab2-gabrielgasbarre\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"res_library.h"
+
+1612139002 source:w:\egr-226\egr226-lab2-gabrielgasbarre\res_library.c
+	"res_library.h"
+	<string.h>
+	<stdio.h>
+
+1611789192 w:\egr-226\egr226-lab2-gabrielgasbarre\res_library.h
+
