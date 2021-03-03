@@ -188,7 +188,12 @@ void Keypad_Pin(void) {
         //Wait for user input
         while(Keypad_Read() == 404);
         //Print current PIN if user presses #
-        if (Keypad_Read() == 11 ){
+        if ((Keypad_Read() == 11) & (pin[3] == 800815 || pin[2] == 800815 || pin[1] == 800815) ){
+            printf("Please enter at least 4 digits.\n\n");
+            //Wait for end of keystroke
+            while(Keypad_Read() != 404);
+        }
+        else if (Keypad_Read() == 11 ){
             printf(" %d, %d, %d, %d\n", pin[3], pin[2], pin[1], pin[0]);
             //Wait for end of keystroke
             while(Keypad_Read() != 404);
