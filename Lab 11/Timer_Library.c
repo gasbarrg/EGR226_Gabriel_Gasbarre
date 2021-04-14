@@ -11,9 +11,11 @@
  *      Systick interrupt handler
  */
 #include "msp.h"
-volatile int count =0;
-unsigned short lastedge, currentedge;
-volatile unsigned short period, result;
+#include "Timer_Library.h"
+volatile int count;
+
+
+
 
 void SysTick_Init(void)                        //initialization of systic timer
   {
@@ -62,7 +64,7 @@ void TimerA0_Init(void)
     TIMER_A0->CTL |= TIMER_A_CTL_CLR;            //Clear timer
     TIMER_A0->CTL |= BIT6 | BIT7;               //Divide clock by 8
 
-    TIMER_A0->CCR[0] = 37500;              // 10 Hz
+    TIMER_A0->CCR[0] = 37500;                  // 10 Hz
     TIMER_A0->CCR[1] = 37500 / 2;
     TIMER_A0->CCTL[1] = TIMER_A_CCTLN_OUTMOD_7;
 
@@ -71,35 +73,43 @@ void TimerA0_Init(void)
 
 void TimerA02_Init(void)
 {
+    //6.6 = t2.3
+    P6->SEL0 |= BIT6;
+    P6->SEL1 &=~ BIT6;       // P6.6
+    P6->DIR  &=~ BIT6;       //Set 6.6 as input
 
-    P2->SEL0 &=~BIT5;
-    P2->SEL1 &=~BIT5;       // P2.5
-    P2->DIR  &=~BIT5;       //Set 2.5 as input
-    P2->REN  |= BIT5;       //internal resistor
-    P2->IES  |= BIT5;       //edge select: high to low
-    P2->IE   |= BIT5;       //enable interrupts
 
-    P2->IFG   = 0;          //Clear all interrupt flags
+    TIMER_A2->CTL |= TIMER_A_CTL_TASSEL_2;              // Use SMCLK as clock source,
+    TIMER_A2->CTL |= TIMER_A_CTL_MC__UP;            // Start timer in CONTINUOUS mode
+    TIMER_A2->CTL |= TIMER_A_CTL_ID_3;                  // divide by 8  375KHz to capture 10 & 14 Hz
+    TIMER_A2->CTL |= TIMER_A_CTL_CLR;                   // clear TA0R
+
+
+    TIMER_A2->CCTL[3] |= TIMER_A_CCTLN_CM_1;            // Capture rising edge,
+    TIMER_A2->CCTL[3] |= TIMER_A_CCTLN_CCIS_0;            // Use CCI2A=ACLK,
+    TIMER_A2->CCTL[3] |= TIMER_A_CCTLN_CCIE;            // Enable capture interrupt
+    TIMER_A2->CCTL[3] |= TIMER_A_CCTLN_CAP;            // Enable capture mode,
+    TIMER_A2->CCTL[3] |= TIMER_A_CCTLN_SCS;               // Synchronous capture
+
+    TIMER_A2->CCR[0] = 65535;
+
 
 }
 
-void PORT2_IRQHandler (void)
- {
-    currentedge = TIMER_A0->R;
-    period = currentedge - lastedge;
-    lastedge = currentedge;
-    P1 -> OUT ^= BIT0;  //TURN ON LIGHT???
-    result = 1;
-    P2->IFG &=~BIT5;    // Clear the interrupt flag
 
- }
 
-void TA0_N_IRQHandler(void)         // Timer A0 interrupt service routine
- {
 
- }
+
+
+
 
 /*
+ *
+ *
+ *     if ( ( 35635 <period ) && ( period < 39375 ) )    // within 5% of 10Hz period
+            detect10Hz=1;
+
+
  * P2->SEL0 |=  BIT5;                 // TA0.CCI2A input capture pin, second function
     P2->SEL1 &=~ BIT5;                // TA0.CCI2A input capture pin, second function
     P2->DIR  &=~ BIT5;
